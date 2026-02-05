@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong League</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen active">
+            <h1>Pong League</h1>
+            <div class="menu-buttons">
+                <button onclick="app.showScreen('team-management')">Manage Teams</button>
+                <button onclick="app.showScreen('series-setup')">Start New Series</button>
+                <button onclick="app.showScreen('statistics')">View Statistics</button>
+                <button onclick="app.showScreen('leaderboard')">Leaderboard</button>
+            </div>
+        </div>
+
+        <!-- Team Management -->
+        <div id="team-management" class="screen">
+            <h2>Team Management</h2>
+            <div class="team-form">
+                <h3>Add New Team</h3>
+                <input type="text" id="player1-name" placeholder="Player 1 Name">
+                <input type="text" id="player2-name" placeholder="Player 2 Name">
+                <input type="text" id="team-name" placeholder="Team Name (optional)">
+                <button onclick="app.addTeam()">Add Team</button>
+            </div>
+            <div class="teams-list">
+                <h3>Current Teams</h3>
+                <div id="teams-container"></div>
+            </div>
+            <button class="back-btn" onclick="app.showScreen('main-menu')">Back to Menu</button>
+        </div>
+
+        <!-- Series Setup -->
+        <div id="series-setup" class="screen">
+            <h2>New Series Setup</h2>
+            <div class="series-form">
+                <label>Select Team 1:</label>
+                <select id="series-team1"></select>
+
+                <label>Select Team 2:</label>
+                <select id="series-team2"></select>
+
+                <label>Best of:</label>
+                <select id="series-length">
+                    <option value="1">Single Game</option>
+                    <option value="3">Best of 3</option>
+                    <option value="5" selected>Best of 5</option>
+                    <option value="7">Best of 7</option>
+                </select>
+
+                <button onclick="app.startSeries()">Start Series</button>
+            </div>
+            <button class="back-btn" onclick="app.showScreen('main-menu')">Back to Menu</button>
+        </div>
+
+        <!-- Game Interface -->
+        <div id="game-interface" class="screen">
+            <div class="game-header">
+                <button class="back-btn" onclick="app.confirmEndGame()">End Game</button>
+                <div class="game-info">
+                    <div class="series-info" id="series-info"></div>
+                    <div class="score-display" id="score-display"></div>
+                </div>
+            </div>
+
+            <div class="game-container">
+                <!-- Team 1 Side -->
+                <div class="team-side team1-side">
+                    <div class="team-header">
+                        <h3 id="team1-name"></h3>
+                        <div class="current-player">
+                            <span id="team1-current-player"></span>
+                        </div>
+                    </div>
+                    <div class="table-section">
+                        <svg id="table1" class="pong-table" viewBox="0 0 400 500"></svg>
+                    </div>
+                    <div class="stats-sidebar" id="team1-stats"></div>
+                </div>
+
+                <!-- Center Controls -->
+                <div class="center-controls">
+                    <div class="turn-indicator" id="turn-indicator"></div>
+                    <div class="shot-controls">
+                        <button class="island-btn" id="island-btn" onclick="app.toggleIslandMode()">ISLAND MODE: OFF</button>
+                        <button class="miss-btn" onclick="app.recordMiss()">MISS</button>
+                        <button class="undo-btn" onclick="app.undoLastAction()">UNDO</button>
+                    </div>
+                    <div class="game-events" id="game-events"></div>
+                </div>
+
+                <!-- Team 2 Side -->
+                <div class="team-side team2-side">
+                    <div class="team-header">
+                        <h3 id="team2-name"></h3>
+                        <div class="current-player">
+                            <span id="team2-current-player"></span>
+                        </div>
+                    </div>
+                    <div class="table-section">
+                        <svg id="table2" class="pong-table" viewBox="0 0 400 500"></svg>
+                    </div>
+                    <div class="stats-sidebar" id="team2-stats"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div id="statistics" class="screen">
+            <h2>Statistics</h2>
+            <div class="stats-filters">
+                <select id="stats-team-filter" onchange="app.updateStatistics()">
+                    <option value="all">All Teams</option>
+                </select>
+            </div>
+            <div id="stats-container"></div>
+            <button class="back-btn" onclick="app.showScreen('main-menu')">Back to Menu</button>
+        </div>
+
+        <!-- Leaderboard -->
+        <div id="leaderboard" class="screen">
+            <h2>Leaderboard</h2>
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" onclick="app.showLeaderboard('winRate', this)">Win Rate</button>
+                <button class="tab-btn" onclick="app.showLeaderboard('accuracy', this)">Accuracy</button>
+                <button class="tab-btn" onclick="app.showLeaderboard('islands', this)">Islands</button>
+                <button class="tab-btn" onclick="app.showLeaderboard('clutch', this)">Clutch Factor</button>
+            </div>
+            <div id="leaderboard-container"></div>
+            <button class="back-btn" onclick="app.showScreen('main-menu')">Back to Menu</button>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
